@@ -6,15 +6,17 @@
 
 <body>
 
-<ul class="notes-list">
+<ul id="notes-list">
 </ul>
 
 <script>
-    function obterNotas() {
-        
-    }
-
-    obterNotas();
+    $(document).ready(function() {
+        $.get('/notes', function(data) {
+            data.forEach(function(item) {
+                $('#notes-list').append('<li>' + item.titulo + '</li>');
+            });
+        });
+    });
 </script>
 
 </body>

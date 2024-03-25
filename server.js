@@ -2,31 +2,11 @@ const express = require('express');
 const app = express();
 const port = 80;
 const path = require('path');
+
 const { MongoClient } = require('mongodb');
-const uri = 'mongodb://26.138.203.133:27017';
+const database = 'mongodb://26.138.203.133:27017';
 const dbName = 'MyNotes';
 const collectionName = 'MyNotes';
-
-async function connectToMongoDB() {
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-  
-    try {
-      await client.connect();
-      console.log('Conectado ao MongoDB');
-      const db = client.db(dbName);
-      const collection = db.collection(collectionName); 
-
-      const result = await collection.insertOne({ key: 'value' });
-      console.log('Documento inserido com sucesso:', result.insertedId);
-    } catch (err) {
-      console.error('Erro ao conectar ao MongoDB:', err);
-    } finally {
-      await client.close();
-      console.log('Conexão com o MongoDB fechada');
-    }
-  }
-
-  connectToMongoDB();
 
 app.get('/', (req, res) => {
     try {
@@ -37,13 +17,29 @@ app.get('/', (req, res) => {
     }
 });
 
-app.get('/notes', (req, res) => {
+app.get('/notes', async (req, res) => {
     try {
-        res.json();
-    } catch {
-        res.status(500).send('Erro')
+        // Conectar ao MongoDB
+        const client = new MongoClient(database);
+        await client.connect();
+
+        // Acessar o banco de dados MyNotes e a coleção MyNotes
+        const db = client.db('MyNotes');
+        const collection = db.collection('MyNotes');
+
+        // Consultar todas as notas na coleção
+        const notes = await collection.find().toArray();
+
+        // Enviar as notas como resposta
+        res.json(notes);
+
+        // Fechar a conexão com o MongoDB
+        await client.close();
+    } catch (error) {
+        console.error('Erro:', error);
+        res.status(500).send('Erro ao buscar notas');
     }
-})
+});
 
 app.get('/app', (req, res) => {
     try {
