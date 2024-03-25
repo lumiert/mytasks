@@ -4,7 +4,7 @@ const port = 80;
 const path = require('path');
 
 const { MongoClient } = require('mongodb');
-const database = 'mongodb://26.138.203.133:27017';
+const database = 'mongodb://4cj6qlv6-27017.brs.devtunnels.ms:27017';
 const dbName = 'MyNotes';
 const collectionName = 'MyNotes';
 
