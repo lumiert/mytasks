@@ -11,25 +11,16 @@ async function connectToMongoDB() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
   
     try {
-      // Conectar ao banco de dados
       await client.connect();
       console.log('Conectado ao MongoDB');
-  
-      // Selecionar o banco de dados
       const db = client.db(dbName);
-  
-      // Selecionar a coleção
-      const collection = db.collection(collectionName);
-  
-      // Executar operações no banco de dados (consultas, inserções, etc.)
-  
-      // Exemplo: inserir um documento na coleção
+      const collection = db.collection(collectionName); 
+
       const result = await collection.insertOne({ key: 'value' });
       console.log('Documento inserido com sucesso:', result.insertedId);
     } catch (err) {
       console.error('Erro ao conectar ao MongoDB:', err);
     } finally {
-      // Fechar a conexão com o MongoDB
       await client.close();
       console.log('Conexão com o MongoDB fechada');
     }
