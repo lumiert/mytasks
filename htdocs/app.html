@@ -4,7 +4,7 @@
 <title>MyNotes - Lumiert</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
-<link rel="stylesheet" href="./app.css">
+<link rel="stylesheet" href="/app.css">
 
 </head>
 
@@ -20,13 +20,18 @@ $(document).ready(function() {
     $.get('/notes', function(data) {
         if (Array.isArray(data)) {
             data.forEach(function(item) {
-                $('#notes-list').append('<div class="item"><div><h1>' + item.title + '</h1><p>' + item.date + '</p></div><div><a class="default-red-button main-delete" onclick="Deletar(' + item.id + ')">Excluir</a></div></div></div>');
+                $('#notes-list').append('<div onClick="editNote('+ item.id +')"class="item"><div><h1>' + item.title + '</h1><p>' + item.date + '</p></div><div><a class="default-red-button main-delete" onclick="Deletar(' + item.id + ')">Excluir</a></div></div></div>');
             });
         } else {
             console.error("Erro no JSON");
         }
     });
 });
+
+function editNote(id) {
+    window.location.href = `/app/edit/${id}`;
+}
+
 </script>
 
 </body>

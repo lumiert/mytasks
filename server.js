@@ -31,6 +31,13 @@ app.get('/app', (req, res) => {
     }
 });
 
+app.get('/app/edit', function(req, res) {
+    var id = req.query.id;
+
+    // Se precisar passar o ID para o arquivo HTML, você pode fazer assim:
+    res.sendFile(path.join(__dirname, './htdocs/edit.html'));
+});
+
 app.use(express.static('public'));
 
 app.listen(port, () => {
