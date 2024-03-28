@@ -2,11 +2,7 @@ const express = require('express');
 const app = express();
 const port = 80;
 const path = require('path');
-
-const { MongoClient } = require('mongodb');
-const database = 'mongodb://26.138.203.133:27017';
-const dbName = 'MyNotes';
-const collectionName = 'MyNotes';
+const notes = (path.join(__dirname, './api/notesdb.json'));
 
 app.get('/', (req, res) => {
     try {
@@ -19,22 +15,7 @@ app.get('/', (req, res) => {
 
 app.get('/notes', async (req, res) => {
     try {
-        // Conectar ao MongoDB
-        const client = new MongoClient(database);
-        await client.connect();
-
-        // Acessar o banco de dados MyNotes e a coleção MyNotes
-        const db = client.db('MyNotes');
-        const collection = db.collection('MyNotes');
-
-        // Consultar todas as notas na coleção
-        const notes = await collection.find().toArray();
-
-        // Enviar as notas como resposta
-        res.json(notes);
-
-        // Fechar a conexão com o MongoDB
-        await client.close();
+        res.sendFile(notes);
     } catch (error) {
         console.error('Erro:', error);
         res.status(500).send('Erro ao buscar notas');
@@ -49,6 +30,8 @@ app.get('/app', (req, res) => {
         res.status(500).send('Erro');
     }
 });
+
+app.use(express.static('public'));
 
 app.listen(port, () => {
     console.log(`Online na porta ${port}`);
