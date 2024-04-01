@@ -5,10 +5,8 @@
      /* border: 1px solid red; */
 }
 
-@media screen and (max-width: 1000px) {
-    body {
-       font-size: 2rem; 
-    }
+body {
+    font-size: 2rem; 
 }
 
 body {
@@ -57,10 +55,22 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+#no-tasks h2 {
+    font-family: 'Montserrat';
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+    padding: 24px;
+    margin: 24px;
+    border-radius: 16px;
+    background-color: #222;
+    color: white;
+}
+
 .task-item {
     font-family: 'Montserrat';
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 700px 92px;
     overflow: hidden;
     justify-content: space-between;
     padding: 24px;
@@ -75,13 +85,18 @@ body {
     color:#479c71;
 }
 
-input[type="text"], input[type="text"]::selection {
+input[type="text"] {
     background-color: #222;
     color: white;
     border: none;
     outline: none;
     font-size: 2em;
     font-family: 'Montserrat';
+}
+
+input[type="text"]:hover {
+    background-color: #444;
+    color: #479c71;
 }
 
 input[type="checkbox"] {

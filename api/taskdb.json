@@ -1,21 +1,10 @@
 {
   "todo": [
     {
-      "id": 2,
-      "task": "Comprar ovos",
-      "date": "31/02/2022",
-      "complete": true
-    },
-    {
-      "id": 3,
+      "id": 1,
       "task": "Comprar leite",
-      "date": "31/03/2021",
-      "complete": true
-    },
-    {
-      "id": 5,
-      "task": "Comprar ovos",
-      "date": "31/02/2022"
+      "date": "01/04/2024",
+      "complete": false
     }
   ]
 }

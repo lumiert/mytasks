@@ -12,96 +12,109 @@
         <h1 class="title">MyTasks</h1>
     </div>
     <div id="tasks-list"></div>
+
+    <div id="no-tasks"><h2>Nenhuma tarefa encontrada. Organize-se com seus afazeres!</h2></div>
     <script src="https://kit.fontawesome.com/f9c37b6146.js" crossorigin="anonymous"></script>
     <script>
-        $(document).ready(function() {
-            function loadTasks() {
-                $.get("/tasks", function(data) {
-                    if (data && data.length > 0) {
-                        $('#tasks-list').empty();
-                        data.sort((a, b) => new Date(a.date) - new Date(b.date));
-                        data.forEach(function(task) {
-                            const isChecked = task.complete; // Verifica se a tarefa está concluída
-
-                            // Define o estilo do texto com base no estado de conclusão
-                            const textDecoration = isChecked ? 'line-through' : 'none';
-
-                            // Cria o elemento HTML para exibir a tarefa
-                            const taskElement = $('<div class="task-item" data-id="' + task.id + '"><input type="text" onblur="renameTask(' + task.id + ', this.value)" value="' + task.task + '" style="text-decoration: ' + textDecoration + ';"><input type="checkbox" ' + (isChecked ? 'checked' : '') + ' onchange="updateTaskState(' + task.id + ', this.checked, this)"><p class="task-date">' + task.date + '</p><div class="app-delete"><i class="fa-solid fa-circle-minus fa-2xl" style="color: #df1111;"></i></div></div>');
-
-                            // Adiciona o elemento da tarefa à lista de tarefas
-                            $('#tasks-list').append(taskElement);
-                        });
-                    } else {
-                        console.log("Nenhuma tarefa encontrada");
-                    }
-                });
-            }
-
-            function deleteItem(id) {
-                $.ajax({
-                    url: '/tasks/' + id,
-                    type: 'DELETE',
-                    success: function(response) {
-                        console.log(response);
-                        loadTasks();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Erro:', error);
-                    }
-                });
-            }
-            $('#tasks-list').on('click', '.app-delete i', function() {
-                var taskId = $(this).closest('.task-item').data('id');
-                deleteItem(taskId);
+        function loadTasks() {
+            $.get("/tasks", function(data) {
+                if (data && data.length > 0) {
+                    $('#tasks-list').empty();
+                    data.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    data.forEach(function(task) {
+                        const isChecked = task.complete;
+                        const textDecoration = isChecked ? 'line-through' : 'none';
+                        const taskElement = $('<div class="task-item" data-id="' + task.id + '"><input type="text" onblur="renameTask(\'' + task.id + '\', this.value)" value="' + task.task + '" style="text-decoration: ' + textDecoration + ';"><input type="checkbox" ' + (isChecked ? 'checked' : '') + ' onchange="updateTaskState(' + task.id + ', this.checked, this)"><p class="task-date">' + task.date + '</p><div class="app-delete"><i class="fa-solid fa-circle-minus fa-2xl" style="color: #df1111;"></i></div></div>');
+                        $('#tasks-list').append(taskElement);
+                    });
+                    $('#tasks-list').show(); // Mostrar a lista de tarefas
+                    $('#no-tasks').hide(); // Ocultar mensagem de "nenhuma tarefa"
+                } else {
+                    console.log("Nenhuma tarefa encontrada");
+                    $('#tasks-list').hide(); // Ocultar lista de tarefas
+                    $('#no-tasks').show(); // Mostrar mensagem de "nenhuma tarefa"
+                }
             });
+        }
 
-            loadTasks();
-        });
-
-        function updateTaskState(taskId, checked, checkbox) {
+        function deleteItem(id) {
             $.ajax({
-                url: '/tasks/' + taskId,
-                type: 'PUT',
-                contentType: 'application/json',
-                data: JSON.stringify({ checked: checked }),
+                url: '/tasks/' + id,
+                type: 'DELETE',
                 success: function(response) {
                     console.log(response);
-                    const taskText = $(checkbox).prev();
-
-                    if (checked) {
-                        taskText.css('text-decoration', 'line-through');
-                    } else {
-                        taskText.css('text-decoration', 'none');
-                    }
+                    loadTasks();
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro:', error);
                 }
             });
         }
+        $('#tasks-list').on('click', '.app-delete i', function() {
+            var taskId = $(this).closest('.task-item').data('id');
+            deleteItem(taskId);
+        });
 
-        function sendState(taskId, value) {
-                    $.ajax({
-                        url: '/tasks/' + taskId,
-                        type: 'PUT',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ title: value }), // Envie o novo título no corpo da requisição
-                        success: function(response) {
-                            console.log(response);
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Erro:', error);
-                        }
-                    });
+        loadTasks();
+
+    function updateTaskState(taskId, checked, checkbox) {
+        $.ajax({
+            url: '/tasks/' + taskId,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ checked: checked }),
+            success: function(response) {
+                console.log(response);
+                const taskText = $(checkbox).prev();
+
+                if (checked) {
+                    taskText.css('text-decoration', 'line-through');
+                } else {
+                    taskText.css('text-decoration', 'none');
                 }
-
-        function renameTask(taskId, newValue) {
-                // Implemente o código para renomear a tarefa com o novo valor
-                console.log("Renomear tarefa com ID " + taskId + " para: " + newValue);
-                // Aqui você pode chamar a função sendState para enviar o novo título ao servidor
-                sendState(taskId, newValue);
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro:', error);
             }
+        });
+    }
+
+    function sendState(taskId, value) {
+        $.ajax({
+            url: '/tasks/' + taskId,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({ title: value }), // Envie o novo título no corpo da requisição
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro:', error);
+            }
+        });
+    }
+
+    function renameTask(taskId, newValue) {
+        console.log("Renomear tarefa com ID " + taskId + " para: " + newValue);
+        sendState(taskId, newValue);
+    }
+
+    function newTask() {
+    $.ajax({
+        url: '/new',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ task: 'Nova tarefa' }), // Envie os dados da nova tarefa no corpo da requisição
+        success: function(response) {
+            console.log(response);
+            loadTasks();
+        },
+        error: function(xhr, status, error) {
+            console.error('Erro:', error);
+            loadTasks();
+        }
+    });
+}
     </script>
 </body>
 </html>
